@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MWA Running</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="game-container">
+        <!-- Background/Game Canvas -->
+        <canvas id="gameCanvas"></canvas>
+        <audio id="bg-music" loop>
+            <source src="Hardwell Ryos Rise Again Hardwell Friends Vol.04.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Registration Screen -->
+        <div id="registration-screen" class="screen full-screen active-screen">
+            <div class="card">
+                <h1>ลงทะเบียนเริ่มเกม</h1>
+                <p>กรุณากรอกข้อมูลเพื่อเริ่มต้น</p>
+                <form id="regForm">
+                    <div class="form-group">
+                        <label for="fullname">ชื่อ-นามสกุล</label>
+                        <input type="text" id="fullname" name="fullname" required placeholder="เช่น Somchai Jaidee">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="employeeId">รหัสพนักงาน (Employee ID)</label>
+                        <input type="text" id="employeeId" name="employeeId" required placeholder="เช่น 00xxxxxx">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">หน่วยงาน (เช่น สผต.กกต.ฝตส.)</label>
+                        <input type="text" id="department" name="department" required placeholder="ระบุหน่วยงาน">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="affiliation">สังกัด (เช่น รวก.(กอ))</label>
+                        <input type="text" id="affiliation" name="affiliation" required placeholder="ระบุสังกัด">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">เบอร์ติดต่อ</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="08xxxxxxxx">
+                    </div>
+
+                    <div class="registration-buttons">
+                        <button type="submit" class="btn-primary">ไปที่หน้ากติกา (Next to Rules)</button>
+                    </div>
+                    <button type="button" id="view-leaderboard-btn-reg" class="btn-secondary"
+                        style="margin-top: 10px; width: 100%;">ดูตารางคะแนน (Leaderboard)</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- UI HUD (Hidden during registration) -->
+        <div id="ui-hud" class="hud hidden">
+            <div class="left-hud-group">
+                <div class="score-board">
+                    <span>Score: <span id="score">0</span></span>
+                </div>
+                <button id="pause-btn" class="pause-btn">⏸️ Pause</button>
+            </div>
+            <div id="project-sequence">
+                <!-- Project word segments will be injected here -->
+            </div>
+            <div class="player-info-hud">
+                <span id="player-display-name">Player</span>
+                <div id="project-progress" class="project-progress">Project: <span id="current-project-count">0</span> /
+                    15</div>
+                <div class="health-container">
+                    <div id="health-bar-fill" class="health-bar-fill"></div>
+                    <span id="health-text">ชีวิต: 100%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pause Screen -->
+        <div id="pause-screen" class="screen full-screen hidden">
+            <div class="card">
+                <h1>Game Paused</h1>
+                <p>พักผ่อนสักครู่ แล้วลุยต่อ</p>
+                <button id="resume-btn" class="btn-primary">▶️ เล่นต่อ (Resume)</button>
+                <button id="quit-btn" class="btn-secondary" style="margin-top: 10px;">ออกจากเกม (Quit)</button>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen full-screen hidden">
+            <div class="card">
+                <h1>Game Over</h1>
+                <div class="final-score">Score: <span id="final-score">0</span></div>
+                <button id="restart-btn" class="btn-primary">เล่นใหม่อีกครั้ง</button>
+                <button id="view-leaderboard-btn-gameover" class="btn-secondary">ดูตารางคะแนน (Leaderboard)</button>
+            </div>
+        </div>
+
+        <!-- Grand Clear Screen -->
+        <div id="grand-clear-screen" class="screen full-screen hidden">
+            <div id="congrats-text" class="hidden">CONGRATULATIONS!</div>
+            <div class="card celebratory-card grand-clear-card">
+                <div class="clear-badge">🏆 ยินดีด้วย! 🏆</div>
+                <h1>คุณพิชิตครบทั้ง 15 โครงการแล้ว!</h1>
+                <p>สุดยอดพนักงาน MWA อย่างแท้จริง</p>
+                <div class="final-score">คะแนนรวม: <span id="grand-clear-score">0</span></div>
+                <button id="grand-restart-btn" class="btn-primary">เล่นใหม่ตั้งแต่ต้น (Play Again)</button>
+                <button id="view-leaderboard-btn-grand" class="btn-secondary">ดูตารางคะแนน (Leaderboard)</button>
+            </div>
+        </div>
+
+        <!-- Leaderboard Screen -->
+        <div id="leaderboard-screen" class="screen full-screen hidden">
+            <div class="card leaderboard-card">
+                <h1>ตารางคะแนนสูงสุด (Global Leaderboard)</h1>
+                <div id="leaderboard-container">
+                    <p id="leaderboard-loading">กำลังโหลดข้อมูล...</p>
+                    <div id="personal-rank-container" class="hidden">
+                        <!-- Personal rank will be shown here -->
+                    </div>
+                    <table id="leaderboard-table" class="hidden">
+                        <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+                                <th>ชื่อ</th>
+                                <th>หน่วยงาน</th>
+                                <th>คะแนน</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            <!-- Data will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+                <button id="close-leaderboard-btn" class="btn-primary">ปิด (Close)</button>
+            </div>
+        </div>
+
+        <!-- Clear Screen -->
+        <div id="clear-screen" class="screen full-screen hidden">
+            <div class="card celebratory-card">
+                <div class="clear-badge">Clear!</div>
+                <h1 id="project-full-name" class="project-title">Project Name</h1>
+                <div class="final-score">Score: <span id="clear-score">0</span></div>
+                <button id="go-to-quiz-btn" class="btn-primary">ไประบุชื่อโครงการ (Go to Quiz)</button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="screen full-screen hidden">
+            <div class="card quiz-card">
+                <div class="timer-container">
+                    <div id="quiz-timer-bar" class="timer-bar"></div>
+                    <span id="quiz-timer-text">10</span>s
+                </div>
+                <h2>คำถาม: โครงการนี้ชื่อว่าโครงการอะไร?</h2>
+                <div id="quiz-options" class="options-grid">
+                    <!-- Choices will be injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Intro Screen -->
+        <div id="project-intro-screen" class="screen full-screen hidden">
+            <div class="card intro-card">
+                <h1 id="intro-project-name" class="project-title fade-in-up">Project Name</h1>
+                <div class="intro-objectives fade-in-up" style="animation-delay: 0.3s;">
+                    <h3>วัตถุประสงค์โครงการ:</h3>
+                    <ul id="intro-project-objectives" class="objectives-list">
+                        <!-- Objectives will be injected here -->
+                    </ul>
+                </div>
+                <button id="start-level-btn" class="btn-primary fade-in-up"
+                    style="animation-delay: 0.6s;">เริ่มลุยด่านนี้! (Start Level)</button>
+            </div>
+        </div>
+        <!-- Rules Modal -->
+        <div id="rules-modal" class="screen full-screen hidden">
+            <div class="card rules-card">
+                <h1>กติกาและวิธีการเล่น</h1>
+
+                <div class="rules-content">
+                    <section>
+                        <h3>🎮 การควบคุม (Controls)</h3>
+                        <div class="control-grid">
+                            <div class="control-item">
+                                <span class="key">Space / ↑</span>
+                                <span>กระโดด (Jump)</span>
+                            </div>
+                            <div class="control-item">
+                                <span class="key">P / Esc</span>
+                                <span>หยุดเกม (Pause)</span>
+                            </div>
+                        </div>
+                        <p class="mobile-note">📱 มือถือ: แตะที่หน้าจอเพื่อกระโดด</p>
+                    </section>
+
+                    <section>
+                        <h3>📝 กติกา (Rules)</h3>
+                        <ul class="rules-list">
+                            <li>เก็บ <strong>"คำศัพท์"</strong> ที่ลอยอยู่ให้ครบตามลำดับเพื่อจบโครงการ</li>
+                            <li><strong>ระวัง!</strong> ท่อประปาและคำที่สะกดผิด (Decoy) จะทำให้เสียพลังชีวิต</li>
+                            <li>เมื่อเก็บครบ จะต้องตอบ <strong>Quiz</strong> เพื่อรับโบนัสและผ่านด่าน</li>
+                            <li>เป้าหมายคือพิชิตให้ครบทั้ง <strong>15 โครงการ</strong>!</li>
+                        </ul>
+                    </section>
+                </div>
+
+                <button id="close-rules-btn" class="btn-primary">เข้าใจแล้ว เริ่มเลย! (Got it, Start!)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas Confetti for Celebration Effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>
