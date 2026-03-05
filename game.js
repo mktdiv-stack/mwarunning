@@ -11,7 +11,7 @@ const CONFIG = {
     obstacleSpawnRate: 120,
     doubleJump: false,
     targetWidth: 1200, // Reference width for scaling
-    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxTt1fNzuJy1O-cYud3fBm5VWmiHKujXjn10stixZ7GrumPogTboHTT-88ybjUikMtHPg/exec'
+    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxhTyJ1o7OklohyxTBEaq8mrPJ8sgs_Jznkt7onfosRmvddTejQJUk3MfjY7X7AeLPViw/exec'
 };
 
 function resize() {
