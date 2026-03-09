@@ -8,10 +8,9 @@ const CONFIG = {
     jumpForce: -13,
     groundHeight: 50,
     gameSpeed: 5.3, // Tweaked to 5.3 based on feedback
-    obstacleSpawnRate: 120,
     doubleJump: false,
     targetWidth: 1200, // Reference width for scaling
-    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxw6fh4krWHhc-LNka4v1p7w5y9Qiby4oXoTCIcEDn_kH8fJZX6eCockSTnd4p0stnkoA/exec'
+    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby14r63ELGIE7fMfoQKqdMXbr09ekaq7-WLR4QYysIUgO_Rq-Lh3_MB4ruhj8E__B8AQg/exec'
 };
 
 function resize() {
