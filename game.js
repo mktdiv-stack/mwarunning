@@ -7,7 +7,7 @@ const CONFIG = {
     gravity: 0.5,
     jumpForce: -13,
     groundHeight: 50,
-    gameSpeed: 5.3, // Tweaked to 5.3 based on feedback
+    gameSpeed: 5.4, // Tweaked to 5.4 based on feedback
     doubleJump: false,
     targetWidth: 1200, // Reference width for scaling
     GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby14r63ELGIE7fMfoQKqdMXbr09ekaq7-WLR4QYysIUgO_Rq-Lh3_MB4ruhj8E__B8AQg/exec'
