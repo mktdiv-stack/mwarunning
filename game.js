@@ -7,7 +7,7 @@ const CONFIG = {
     gravity: 0.5,
     jumpForce: -13,
     groundHeight: 50,
-    gameSpeed: 5.4, // Tweaked to 5.4 based on feedback
+    gameSpeed: 5.45, // Tweaked to 5.45 based on feedback
     doubleJump: false,
     targetWidth: 1200, // Reference width for scaling
     GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby14r63ELGIE7fMfoQKqdMXbr09ekaq7-WLR4QYysIUgO_Rq-Lh3_MB4ruhj8E__B8AQg/exec'
@@ -44,7 +44,7 @@ const state = {
     nextSpawnFrame: 100,
     collectedIndices: [],
     quizInterval: null,
-    quizTimeLeft: 10,
+    quizTimeLeft: 5,
     health: 100,
     isInvincible: false,
     invincibilityTimer: 0,
@@ -59,91 +59,106 @@ const PROJECTS_POOL = [
     {
         id: "CMO1-T2-P1",
         fullName: "CMO1-T2-P1 โครงการจัดทำข้อมูล Customer Persona และ Customer Journey",
-        words: ["CMO1-T2-P1", "โครงการจัดทำข้อมูล", "Customer Persona", "Customer Journey"],
+        words: ["CMO1-T2-P1", "จัดทำข้อมูล", "Customer Persona", "Customer Journey"],
+        keyWords: ["จัดทำข้อมูล", "Customer Journey"],
         objectives: ["พัฒนาวิเคราะห์ข้อมูลเพื่อตอบสนองลูกค้า"]
     },
     {
         id: "CMO1-T2-P2",
         fullName: "CMO1-T2-P2 โครงการพัฒนาปรับปรุงผลิตภัณฑ์และบริการที่ตอบสนองลูกค้าตาม Customer Persona และ Customer Journey",
-        words: ["CMO1-T2-P2", "พัฒนาปรับปรุงผลิตภัณฑ์", "ที่ตอบสนองลูกค้า", "Customer Persona/Journey"],
+        words: ["CMO1-T2-P2", "ปรับปรุงผลิตภัณฑ์และบริการ", "ที่ตอบสนองลูกค้า", "Customer Persona"],
+        keyWords: ["ปรับปรุงผลิตภัณฑ์และบริการ", "Customer Persona"],
         objectives: ["พัฒนาผลิตภัณฑ์และบริการเพื่อตอบสนองลูกค้าเป้าหมาย"]
     },
     {
         id: "CMO1-T3-P1",
         fullName: "CMO1-T3-P1 โครงการยกระดับการให้บริการมาตรอัจฉริยะ Smart Meter",
         words: ["CMO1-T3-P1", "โครงการยกระดับบริการ", "มาตรอัจฉริยะ", "Smart Meter"],
+        keyWords: ["มาตรอัจฉริยะ", "Smart Meter"],
         objectives: ["ยกระดับและขยายผลบริการ Smart Meter ให้ตอบสนองความคาดหวังของลูกค้า"]
     },
     {
         id: "CMO1-T3-P2",
         fullName: "CMO1-T3-P2 โครงการสนับสนุนบริการ Digital Service ผ่าน MWA Point",
         words: ["CMO1-T3-P2", "สนับสนุนบริการ", "Digital Service", "MWA Point"],
+        keyWords: ["Digital Service", "MWA Point"],
         objectives: ["กระตุ้นการใช้ Digital Service และสร้างความสัมพันธ์ที่ดีผ่าน MWA Point"]
     },
     {
         id: "CMO1-T3-P3",
         fullName: "CMO1-T3-P3 โครงการพัฒนา/เพิ่มช่องทางการรับชำระเงินด้วยบริการ Digital Service",
-        words: ["CMO1-T3-P3", "พัฒนาเพิ่มช่องทาง", "การรับชำระเงิน", "Digital Service"],
+        words: ["CMO1-T3-P3", "พัฒนา/เพิ่มช่องทางการรับชำระเงิน", "Digital Service"],
+        keyWords: ["พัฒนา/เพิ่มช่องทางการรับชำระเงิน", "Digital Service"],
         objectives: ["เพิ่มช่องทางและสร้างการรับรู้การรับชำระเงินด้วย Digital Service"]
     },
     {
         id: "CMO1-T3-P4",
         fullName: "CMO1-T3-P4 โครงการประชาสัมพันธ์เพื่อกระตุ้นการใช้บริการผ่านช่องทาง Digital Service",
-        words: ["CMO1-T3-P4", "โครงการประชาสัมพันธ์", "กระตุ้นการใช้บริการ", "Digital Service"],
+        words: ["CMO1-T3-P4", "ประชาสัมพันธ์", "ช่องทาง", "Digital Service"],
+        keyWords: ["ประชาสัมพันธ์", "ช่องทาง Digital Service"],
         objectives: ["ประชาสัมพันธ์กระตุ้นการใช้และเพิ่มความพึงพอใจในบริการ Digital Service"]
     },
     {
         id: "CMO1-T4-P1",
         fullName: "CMO1-T4-P1 โครงการยกระดับศูนย์บริการประชาชน 1125 ",
         words: ["CMO1-T4-P1", "โครงการยกระดับ", "ศูนย์บริการประชาชน", "1125"],
+        keyWords: ["ศูนย์บริการประชาชน", "1125"],
         objectives: ["ตอบสนองความคาดหวังและสร้างภาพลักษณ์ที่ดีผ่านศูนย์บริการประชาชน 1125"]
     },
     {
         id: "CMO1-T5-P1",
         fullName: "CMO1-T5-P1 โครงการพัฒนาข้อมูลชุดคำตอบสำหรับ AI-based chatbot",
         words: ["CMO1-T5-P1", "พัฒนาข้อมูลชุดคำตอบ", "สำหรับ", "AI-based chatbot"],
+        keyWords: ["AI-based chatbot"],
         objectives: ["ยกระดับการบริการด้วย AI-based chatbot เพื่อตอบสนองความคาดหวังของลูกค้า"]
     },
     {
         id: "CMO1-T6-P1",
         fullName: "CMO1-T6-P1 โครงการยกระดับความสัมพันธ์กับกลุ่มลูกค้ารายสำคัญ (MWA Top-Tier)",
-        words: ["CMO1-T6-P1", "ยกระดับความสัมพันธ์", "กลุ่มลูกค้ารายสำคัญ", "MWA Top-Tier"],
+        words: ["CMO1-T6-P1", "ยกระดับความสัมพันธ์", "ลูกค้ารายสำคัญ", "(MWA Top-Tier)"],
+        keyWords: ["ยกระดับความสัมพันธ์", "ลูกค้ารายสำคัญ", "(MWA Top-Tier)"],
         objectives: ["ยกระดับความสัมพันธ์ รวบรวมความต้องการ และสร้างภาพลักษณ์ที่ดีต่อลูกค้ารายสำคัญ"]
     },
     {
         id: "CMO1-T6-P2",
         fullName: "CMO1-T6-P2 โครงการยกระดับความสัมพันธ์ด้วยกิจกรรมสร้างความสัมพันธ์กับกลุ่มลูกค้าทั่วไป",
-        words: ["CMO1-T6-P2", "ยกระดับความสัมพันธ์", "กิจกรรมสร้างสัมพันธ์", "ลูกค้าทั่วไป"],
+        words: ["CMO1-T6-P2", "สร้างความสัมพันธ์", "ลูกค้าทั่วไป"],
+        keyWords: ["สร้างความสัมพันธ์", "ลูกค้าทั่วไป"],
         objectives: ["ยกระดับความสัมพันธ์ รวบรวมความต้องการ และสร้างภาพลักษณ์ที่ดีต่อลูกค้าทั่วไป"]
     },
     {
         id: "CMO3-T1-P1",
         fullName: "CMO3-T1-P1 โครงการงาน Integrated Waterworks Services",
         words: ["CMO3-T1-P1", "Integrated", "Waterworks", "Services"],
+        keyWords: ["Integrated", "Waterworks", "Services"],
         objectives: ["เพิ่มรายได้ของธุรกิจที่เกี่ยวเนื่องด้านงานบริการด้านการออกแบบ และปรับปรุงระบบประปา"]
     },
     {
         id: "CMO3-T1-P2",
         fullName: "CMO3-T1-P2 โครงการบริการ Home Care Services",
-        words: ["CMO3-T1-P2", "โครงการบริการ", "Home Care", "Services"],
+        words: ["CMO3-T1-P2", "Home Care", "Services"],
+        keyWords: ["Home Care", "Services"],
         objectives: ["เพิ่มรายได้ของธุรกิจที่เกี่ยวเนื่องด้านการบริการประปาครบวงจรสำหรับสถานที่ใช้น้ำ"]
     },
     {
         id: "CMO3-T1-P3",
         fullName: "CMO3-T1-P3 โครงการศูนย์บริการทดสอบงานประปา (Testing Center)",
-        words: ["CMO3-T1-P3", "ศูนย์บริการทดสอบ", "งานประปา", "(Testing Center)"],
+        words: ["CMO3-T1-P3", "ทดสอบงานประปา", "Testing Center"],
+        keyWords: ["ทดสอบงานประปา", "Testing Center"],
         objectives: ["เพิ่มรายได้ของธุรกิจที่เกี่ยวเนื่องด้านศูนย์บริการทดสอบงานประปา"]
     },
     {
         id: "CMO3-T1-P4",
         fullName: "CMO3-T1-P4 โครงการ Innovation & Technology",
-        words: ["CMO3-T1-P4", "โครงการ", "Innovation &", "Technology"],
+        words: ["CMO3-T1-P4", "Innovation", "& Technology"],
+        keyWords: ["Innovation", "& Technology"],
         objectives: ["เพิ่มรายได้ของธุรกิจที่เกี่ยวเนื่องด้านการบริการนวัตกรรมและเทคโนโลยี"]
     },
     {
         id: "CMO3-T1-P5",
         fullName: "CMO3-T1-P5 โครงการศูนย์ความเป็นเลิศด้านระบบประปา (MWA Excellent Center)",
-        words: ["CMO3-T1-P5", "ศูนย์ความเป็นเลิศ", "ด้านระบบประปา", "MWA Excellent Center"],
+        words: ["CMO3-T1-P5", "ระบบประปา", "MWA Excellent Center"],
+        keyWords: ["ระบบประปา", "MWA Excellent Center"],
         objectives: ["เพิ่มรายได้ของธุรกิจที่เกี่ยวเนื่องด้านศูนย์ความเป็นเลิศด้านระบบประปา"]
     }
 ];
@@ -342,24 +357,61 @@ class Obstacle {
 function generateDecoy(word) {
     if (!word) return "Error";
 
-    // Specific manual replacements for common patterns
-    if (word.includes("จัดทำข้อมูล")) return "จดทำข้อมูญ";
-    if (word.includes("Customer Persona")) return "Costomer Person";
-    if (word.includes("Customer Journey")) return "Costomer Journee";
-    if (word.includes("โครงการ")) return "โคลงการ";
+    // Precise dictionary for highly similar visually/phonetically deceptive typos
+    const typoMap = {
+        "จัดทำข้อมูล": "จัดทำข้อมล",
+        "Customer Persona": "Customer Persono",
+        "Customer Journey": "Customer Jorney",
+        "ปรับปรุงผลิตภัณฑ์และบริการ": "ปรับปรุงผลิตภัณท์และบริการ",
+        "ที่ตอบสนองลูกค้า": "ที่ตอบสนองลูกค่า",
+        "โครงการยกระดับบริการ": "โครงการยกระดับบรีการ",
+        "มาตรอัจฉริยะ": "มาตราอัจฉริยะ",
+        "Smart Meter": "Smart Metar",
+        "สนับสนุนบริการ": "สนันสนุนบริการ",
+        "Digital Service": "Digitai Service",
+        "ช่องทาง Digital Service": "ช่องทาง Digitai Service",
+        "MWA Point": "MWA Poin",
+        "พัฒนา/เพิ่มช่องทางการรับชำระเงิน": "พัฒนา/เพื่มช่องทางการรับชำระเงิน",
+        "การรับชำระเงิน": "การรับชำระเงิย",
+        "ประชาสัมพันธ์": "ประชาสัมพันธ",
+        "กระตุ้นการใช้บริการ": "กระตุ้นการใช้บริกาล",
+        "โครงการยกระดับ": "โครงการยกระตับ",
+        "ศูนย์บริการประชาชน": "ศุนย์บริการประชาชน",
+        "1125": "1126",
+        "พัฒนาข้อมูลชุดคำตอบ": "พัฒนาข้อมูลชุดคำคอบ",
+        "สำหรับ": "สำหลับ",
+        "AI-based chatbot": "Al-based chatbot",
+        "ยกระดับความสัมพันธ์": "ยกระดับความสัมพันธ",
+        "ลูกค้ารายสำคัญ": "ลูกค่ารายสำคัญ",
+        "(MWA Top-Tier)": "(MWA Top-Teir)",
+        "สร้างความสัมพันธ์": "สร้างส้มพันธ์",
+        "ลูกค้าทั่วไป": "ลูกค้าทั้วไป",
+        "Integrated": "lntegrated",
+        "Waterworks": "Waterwork",
+        "Services": "Servlces",
+        "Home Care": "Hame Care",
+        "ทดสอบงานประปา": "ทตสอบงานประปา",
+        "Testing Center": "Testlng Center",
+        "Innovation": "lnnovation",
+        "& Technology": "& Technolagy",
+        "ระบบประปา": "ระบบปะปา",
+        "MWA Excellent Center": "MWA Excelent Center"
+    };
 
-    // Generic scrambling for others
+    if (typoMap[word]) return typoMap[word];
+
+    // For project IDs like CMO1-T2-P1 -> CM01-T2-P1 (Replace O with zero)
+    if (word.startsWith("CMO")) {
+        return word.replace("O", "0");
+    }
+
+    // Generic fallback for any other words: swap two adjacent middle characters
     const chars = word.split('');
-    if (chars.length > 2) {
-        // Swap two distinct characters
-        const idx1 = Math.floor(Math.random() * chars.length);
-        let idx2 = Math.floor(Math.random() * chars.length);
-        while (idx1 === idx2) idx2 = Math.floor(Math.random() * chars.length);
-
-        [chars[idx1], chars[idx2]] = [chars[idx2], chars[idx1]];
+    if (chars.length > 3) {
+        const idx = Math.floor(Math.random() * (chars.length - 2)) + 1; // Pick middle character
+        [chars[idx], chars[idx + 1]] = [chars[idx + 1], chars[idx]];
     } else {
-        // Just append X for short words
-        chars.push('X');
+        chars.push('x');
     }
     return chars.join('');
 }
@@ -426,11 +478,48 @@ const projectSequence = document.getElementById('project-sequence');
 
 function initCollectionBar() {
     projectSequence.innerHTML = '';
-    WORD_LIST.forEach((word, i) => {
+    const fullName = state.currentProject.fullName;
+    
+    let currentIndex = 0;
+    let sequenceItems = [];
+    
+    WORD_LIST.forEach((targetWord, idx) => {
+        const foundPos = fullName.indexOf(targetWord, currentIndex);
+        if (foundPos !== -1) {
+            if (foundPos > currentIndex) {
+                const prefix = fullName.substring(currentIndex, foundPos).trim();
+                if (prefix) {
+                    sequenceItems.push({ text: prefix, isTarget: false });
+                }
+            }
+            sequenceItems.push({ text: targetWord, isTarget: true, targetId: idx });
+            currentIndex = foundPos + targetWord.length;
+        } else {
+            sequenceItems.push({ text: targetWord, isTarget: true, targetId: idx });
+        }
+    });
+    
+    if (currentIndex < fullName.length) {
+        const suffix = fullName.substring(currentIndex).trim();
+        if (suffix) {
+            sequenceItems.push({ text: suffix, isTarget: false });
+        }
+    }
+    
+    sequenceItems.forEach(item => {
+        let displayText = item.text.replace(/โครงการ/g, '').trim();
+        if (displayText === '' && !item.isTarget) return; // Skip if it becomes completely empty
+        
         const span = document.createElement('span');
-        span.textContent = word;
+        span.textContent = displayText;
         span.classList.add('sequence-item');
-        span.id = `word-${i}`;
+        
+        if (item.isTarget) {
+            span.id = `word-${item.targetId}`;
+        } else {
+            span.classList.add('collected');
+        }
+        
         projectSequence.appendChild(span);
     });
 }
@@ -477,7 +566,20 @@ function startProjectIntro() {
         state.currentProject = availableProjects[Math.floor(Math.random() * availableProjects.length)];
     }
 
-    WORD_LIST = state.currentProject.words;
+    // Apply Option 1: Reduce number of words to collect
+    // Use the explicitly defined key words for the project
+    if (state.currentProject.keyWords) {
+        WORD_LIST = [...state.currentProject.keyWords];
+    } else {
+        const fullWordList = state.currentProject.words;
+        if (fullWordList.length > 2) {
+            const idWord = fullWordList[0];
+            const keyWord = fullWordList[fullWordList.length - 1];
+            WORD_LIST = [idWord, keyWord];
+        } else {
+            WORD_LIST = fullWordList; // Less than 3 words, just use them all safely
+        }
+    }
 
     // Show intro screen!
     state.screen = 'intro';
@@ -699,7 +801,7 @@ function startQuiz() {
     });
 
     // Reset and start timer
-    state.quizTimeLeft = 10;
+    state.quizTimeLeft = 5;
     quizTimerBar.style.width = '100%';
     quizTimerText.textContent = state.quizTimeLeft;
 
@@ -712,7 +814,7 @@ function startQuiz() {
             handleQuizAnswer(false); // Timeout also means wrong/minus
         }
         quizTimerText.textContent = Math.ceil(state.quizTimeLeft);
-        quizTimerBar.style.width = (state.quizTimeLeft / 10 * 100) + '%';
+        quizTimerBar.style.width = (state.quizTimeLeft / 5 * 100) + '%';
     }, 100);
 }
 
@@ -903,27 +1005,29 @@ function loop() {
                 spawnType = 'none';
             }
 
-            // Spawn further away: 500px gap
-            const safeDist = 500;
+            // Spawn further away: 450px allows enough room after the previous pipe
+            const safeDist = 450;
 
             if (spawnType === 'correct') {
                 const col = new Collectible(targetWord, nextIndex, false);
                 col.x = canvas.width + safeDist;
                 collectibles.push(col);
-                addedDelay = 90; // Significantly increased delay for the next pipe
+                // Give plenty of time before the NEXT pipe spawns so it isn't directly below the word
+                addedDelay = 120;
             } else if (spawnType === 'decoy') {
                 state.levelDecoySpawned = true; // Mark that a decoy has appeared this level
                 const decoyWord = generateDecoy(targetWord);
                 const col = new Collectible(decoyWord, -1, true);
                 col.x = canvas.width + safeDist;
                 collectibles.push(col);
-                addedDelay = 90; // Significantly increased delay for the next pipe
+                // Give plenty of time before the NEXT pipe spawns so it isn't directly below the word
+                addedDelay = 120;
             }
         }
 
         // Set next spawn frame with a minimum gap
-        const minGap = 90; // Reduced (was 120)
-        const maxGap = 140; // Reduced (was 180)
+        const minGap = 65; // Slightly increased base gap to prevent pipes from bunching up
+        const maxGap = 105;
         const randomGap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
         state.nextSpawnFrame = state.frames + randomGap + addedDelay;
     }

@@ -268,15 +268,24 @@ input:focus {
     }
 }
 
-#project-sequence {
+.center-hud-group {
     position: absolute;
-    top: calc(60px * var(--scale));
+    top: calc(10px * var(--scale));
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    flex-wrap: nowrap;
-    /* Keep on one line if possible */
-    gap: calc(4px * var(--scale));
+    flex-direction: column;
+    align-items: center;
+    gap: calc(10px * var(--scale));
+    pointer-events: none;
+    width: 80%;
+}
+
+#project-sequence {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: calc(18px * var(--scale)); /* Increased gap between words */
     background: transparent;
     padding: calc(5px * var(--scale));
     pointer-events: none;
@@ -284,7 +293,7 @@ input:focus {
 
 .sequence-item {
     font-size: calc(20px * var(--scale));
-    padding: calc(8px * var(--scale)) calc(18px * var(--scale));
+    padding: calc(6px * var(--scale)) calc(14px * var(--scale));
     border-radius: calc(8px * var(--scale));
     background: rgba(120, 144, 156, 0.82);
     /* Slate blue-gray background */
@@ -292,7 +301,9 @@ input:focus {
     font-weight: bold;
     border: calc(1px * var(--scale)) solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 calc(3px * var(--scale)) calc(6px * var(--scale)) rgba(0, 0, 0, 0.4);
-    white-space: nowrap;
+    white-space: pre-wrap;
+    text-align: center;
+    max-width: 90vw;
     transition: all 0.3s ease;
 }
 
