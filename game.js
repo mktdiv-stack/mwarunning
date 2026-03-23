@@ -128,7 +128,7 @@ const PROJECTS_POOL = [
     },
     {
         id: "CMO3-T1-P1",
-        fullName: "CMO3-T1-P1 โครงการงาน Integrated Waterworks Services",
+        fullName: "CMO3-T1-P1 โครงการ Integrated Waterworks Services",
         words: ["CMO3-T1-P1", "Integrated", "Waterworks", "Services"],
         keyWords: ["Integrated", "Waterworks", "Services"],
         objectives: ["เพิ่มรายได้ของธุรกิจที่เกี่ยวเนื่องด้านงานบริการด้านการออกแบบ และปรับปรุงระบบประปา"]
@@ -159,7 +159,7 @@ const PROJECTS_POOL = [
         fullName: "CMO3-T1-P5 โครงการศูนย์ความเป็นเลิศด้านระบบประปา (MWA Excellent Center)",
         words: ["CMO3-T1-P5", "ระบบประปา", "MWA Excellent Center"],
         keyWords: ["ระบบประปา", "MWA Excellent Center"],
-        objectives: ["เพิ่มรายได้ของธุรกิจที่เกี่ยวเนื่องด้านศูนย์ความเป็นเลิศด้านระบบประปา"]
+        objectives: ["เพิ่มรายได้ของธุรกิจที่เกี่ยวเนื่องบริการฝึกอบรมเทคโนโลยีการประปา"]
     }
 ];
 
@@ -821,9 +821,10 @@ function startQuiz() {
 function handleQuizAnswer(isCorrect, btn = null) {
     clearInterval(state.quizInterval);
 
-    // Score adjustment (+/- 10 points)
+    // Score adjustment based on speed (Base 10 + Bonus up to 50)
     if (isCorrect) {
-        state.score += 10;
+        const speedBonus = Math.floor(state.quizTimeLeft * 10); // 1 sec = 10 pts
+        state.score += (10 + speedBonus);
         state.quizCorrectCount++; // Increment correct quiz count
         if (btn) btn.classList.add('correct');
         // Mark project as completed if correctly answered
