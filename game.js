@@ -1177,9 +1177,14 @@ function renderLeaderboard(data) {
         // Find current player in the full data set to get rank
         // Use more robust matching (trim whitespace, case insensitive name)
         const playerIndex = data.findIndex(entry => {
-            if (!entry.fullname || !entry.employeeId) return false;
+            if (!entry.fullname || !state.playerData.fullname) return false;
             const matchName = entry.fullname.toString().trim().toLowerCase() === state.playerData.fullname.toString().trim().toLowerCase();
-            const matchID = entry.employeeId.toString().trim() === state.playerData.employeeId.toString().trim();
+            let matchID = true;
+            if (entry.employeeId && state.playerData.employeeId) {
+                matchID = entry.employeeId.toString().trim() === state.playerData.employeeId.toString().trim();
+            } else if (entry.department && state.playerData.department) {
+                matchID = entry.department.toString().trim().toLowerCase() === state.playerData.department.toString().trim().toLowerCase();
+            }
             return matchName && matchID;
         });
 
@@ -1202,10 +1207,17 @@ function renderLeaderboard(data) {
         else if (rank === 3) rankClass = 'rank-3';
 
         // Highlight player row if they are in the top 10
-        if (state.playerData && entry.fullname && entry.employeeId &&
-            entry.fullname.toString().trim().toLowerCase() === state.playerData.fullname.toString().trim().toLowerCase() &&
-            entry.employeeId.toString().trim() === state.playerData.employeeId.toString().trim()) {
-            row.style.background = '#fff3cd';
+        if (state.playerData && entry.fullname && state.playerData.fullname &&
+            entry.fullname.toString().trim().toLowerCase() === state.playerData.fullname.toString().trim().toLowerCase()) {
+            let matchID = true;
+            if (entry.employeeId && state.playerData.employeeId) {
+                matchID = entry.employeeId.toString().trim() === state.playerData.employeeId.toString().trim();
+            } else if (entry.department && state.playerData.department) {
+                matchID = entry.department.toString().trim().toLowerCase() === state.playerData.department.toString().trim().toLowerCase();
+            }
+            if (matchID) {
+                row.style.background = '#fff3cd';
+            }
         }
 
         row.innerHTML = `
