@@ -671,7 +671,7 @@ function gameOver() {
     if (rankDisplay) {
         rankDisplay.style.display = 'none';
     }
-    fetchAndShowRank('game-over-rank', finalScore);
+    fetchAndShowRank('game-over-rank', finalScore, gameOverScreen);
     
     gameOverScreen.classList.remove('hidden');
 
@@ -922,7 +922,8 @@ function showFinalGameOver(isGrandVictory = false) {
     }
 
     const rankContainerId = isGrandVictory ? 'grand-clear-rank' : 'game-over-rank';
-    fetchAndShowRank(rankContainerId, finalScore);
+    const activeScreen = isGrandVictory ? grandClearScreen : gameOverScreen;
+    fetchAndShowRank(rankContainerId, finalScore, activeScreen);
 
     // Send final data
     if (CONFIG.GOOGLE_SCRIPT_URL && CONFIG.GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE' && state.playerData) {
@@ -1134,18 +1135,62 @@ restartBtn.addEventListener('click', () => {
     }
 });
 
-function fetchAndShowRank(containerId, finalScore) {
-    const rankContainer = document.getElementById(containerId);
-    if (!rankContainer || !state.playerData) return;
+function fetchAndShowRank(containerId, finalScore, targetScreen = null) {
+    let rankContainer = document.getElementById(containerId);
+    
+    if (!rankContainer && targetScreen) {
+        rankContainer = document.createElement('div');
+        rankContainer.id = containerId;
+        rankContainer.style.fontWeight = 'bold';
+        rankContainer.style.color = '#856404';
+        rankContainer.style.background = '#fff3cd';
+        rankContainer.style.padding = '10px';
+        rankContainer.style.borderRadius = '8px';
+        rankContainer.style.marginTop = '15px';
+        rankContainer.style.marginBottom = '15px';
+        
+        const scoreDiv = targetScreen.querySelector('.final-score');
+        if (scoreDiv) {
+            scoreDiv.parentNode.insertBefore(rankContainer, scoreDiv.nextSibling);
+        } else {
+            const card = targetScreen.querySelector('.card');
+            if (card) card.appendChild(rankContainer);
+        }
+    }
+
+    if (!rankContainer) return;
+
+    if (!state.playerData) {
+        const regForm = document.getElementById('regForm');
+        if (regForm) {
+            const formData = new FormData(regForm);
+            const tempName = formData.get('fullname');
+            if (tempName) {
+                state.playerData = {
+                    fullname: tempName,
+                    employeeId: formData.get('employeeId'),
+                    department: formData.get('department'),
+                    affiliation: formData.get('affiliation'),
+                    phone: formData.get('phone')
+                };
+            }
+        }
+    }
     
     rankContainer.style.display = 'block';
+
+    if (!state.playerData) {
+        rankContainer.textContent = 'กรุณาลงทะเบียนแบบปกติเพื่อคำนวณอันดับ';
+        return;
+    }
+    
     rankContainer.textContent = 'กำลังคำนวณอันดับ... (Calculating Rank)';
     
     fetch(CONFIG.GOOGLE_SCRIPT_URL + '?action=getLeaderboard')
         .then(response => response.json())
         .then(data => {
-            if (!data) {
-                rankContainer.style.display = 'none';
+            if (!data || !Array.isArray(data)) {
+                rankContainer.textContent = 'ไม่สามารถโหลดข้อมูลอันดับได้';
                 return;
             }
             
@@ -1181,12 +1226,12 @@ function fetchAndShowRank(containerId, finalScore) {
             if (finalIndex !== -1) {
                 rankContainer.textContent = `อันดับของคุณ: ${finalIndex + 1} (จากผู้เล่นทั้งหมด ${data.length} คน)`;
             } else {
-                rankContainer.style.display = 'none';
+                rankContainer.textContent = 'อันดับของคุณ: ไม่พบข้อมูล';
             }
         })
         .catch(err => {
             console.error('Error fetching rank:', err);
-            rankContainer.style.display = 'none';
+            rankContainer.textContent = 'ไม่สามารถโหลดอันดับได้ (เกิดข้อผิดพลาดในการเชื่อมต่อ)';
         });
 }
 
