@@ -666,6 +666,13 @@ function gameOver() {
     const finalScore = Math.floor(state.score);
     finalScoreDisplay.textContent = finalScore;
     hud.classList.add('hidden');
+    
+    const rankDisplay = document.getElementById('game-over-rank');
+    if (rankDisplay) {
+        rankDisplay.style.display = 'none';
+    }
+    fetchAndShowRank('game-over-rank', finalScore);
+    
     gameOverScreen.classList.remove('hidden');
 
     // Reset heading and button text
@@ -870,6 +877,12 @@ function showNextProjectPrompt() {
     if (heading) heading.textContent = "ภารกิจสำเร็จ! (Project Cleared)";
 
     restartBtn.textContent = "เริ่มโครงการถัดไป (Next Project)";
+    
+    const rankDisplay = document.getElementById('game-over-rank');
+    if (rankDisplay) {
+        rankDisplay.style.display = 'none';
+    }
+    
     gameOverScreen.classList.remove('hidden');
 }
 
@@ -907,6 +920,9 @@ function showFinalGameOver(isGrandVictory = false) {
         if (restartBtn) restartBtn.textContent = "เล่นใหม่ตั้งแต่ต้น (Play Again)";
         if (gameOverScreen) gameOverScreen.classList.remove('hidden');
     }
+
+    const rankContainerId = isGrandVictory ? 'grand-clear-rank' : 'game-over-rank';
+    fetchAndShowRank(rankContainerId, finalScore);
 
     // Send final data
     if (CONFIG.GOOGLE_SCRIPT_URL && CONFIG.GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE' && state.playerData) {
@@ -1117,6 +1133,62 @@ restartBtn.addEventListener('click', () => {
         regForm.reset();
     }
 });
+
+function fetchAndShowRank(containerId, finalScore) {
+    const rankContainer = document.getElementById(containerId);
+    if (!rankContainer || !state.playerData) return;
+    
+    rankContainer.style.display = 'block';
+    rankContainer.textContent = 'กำลังคำนวณอันดับ... (Calculating Rank)';
+    
+    fetch(CONFIG.GOOGLE_SCRIPT_URL + '?action=getLeaderboard')
+        .then(response => response.json())
+        .then(data => {
+            if (!data) {
+                rankContainer.style.display = 'none';
+                return;
+            }
+            
+            const matchPlayer = (entry) => {
+                if (!entry.fullname || !state.playerData.fullname) return false;
+                const matchName = entry.fullname.toString().trim().toLowerCase() === state.playerData.fullname.toString().trim().toLowerCase();
+                let matchID = true;
+                if (entry.employeeId && state.playerData.employeeId) {
+                    matchID = entry.employeeId.toString().trim() === state.playerData.employeeId.toString().trim();
+                } else if (entry.department && state.playerData.department) {
+                    matchID = entry.department.toString().trim().toLowerCase() === state.playerData.department.toString().trim().toLowerCase();
+                }
+                return matchName && matchID;
+            };
+
+            const playerIndex = data.findIndex(matchPlayer);
+            if (playerIndex !== -1) {
+                if (finalScore > data[playerIndex].score) {
+                    data[playerIndex].score = finalScore;
+                }
+            } else {
+                data.push({
+                    fullname: state.playerData.fullname,
+                    employeeId: state.playerData.employeeId,
+                    department: state.playerData.department,
+                    score: finalScore
+                });
+            }
+            
+            data.sort((a, b) => b.score - a.score);
+            const finalIndex = data.findIndex(matchPlayer);
+            
+            if (finalIndex !== -1) {
+                rankContainer.textContent = `อันดับของคุณ: ${finalIndex + 1} (จากผู้เล่นทั้งหมด ${data.length} คน)`;
+            } else {
+                rankContainer.style.display = 'none';
+            }
+        })
+        .catch(err => {
+            console.error('Error fetching rank:', err);
+            rankContainer.style.display = 'none';
+        });
+}
 
 const leaderboardScreen = document.getElementById('leaderboard-screen');
 const leaderboardBody = document.getElementById('leaderboard-body');
