@@ -1006,15 +1006,15 @@ function loop() {
                 spawnType = 'none';
             }
 
-            // Spawn further away: 450px allows enough room after the previous pipe
-            const safeDist = 450;
+            // Spawn further away: 700px allows enough room after the previous pipe
+            const safeDist = 700;
 
             if (spawnType === 'correct') {
                 const col = new Collectible(targetWord, nextIndex, false);
                 col.x = canvas.width + safeDist;
                 collectibles.push(col);
                 // Give plenty of time before the NEXT pipe spawns so it isn't directly below the word
-                addedDelay = 120;
+                addedDelay = 180;
             } else if (spawnType === 'decoy') {
                 state.levelDecoySpawned = true; // Mark that a decoy has appeared this level
                 const decoyWord = generateDecoy(targetWord);
@@ -1022,7 +1022,7 @@ function loop() {
                 col.x = canvas.width + safeDist;
                 collectibles.push(col);
                 // Give plenty of time before the NEXT pipe spawns so it isn't directly below the word
-                addedDelay = 120;
+                addedDelay = 180;
             }
         }
 
@@ -1035,6 +1035,7 @@ function loop() {
 
     // Collectibles Update
     collectibles.forEach(col => {
+        col.speed = CONFIG.gameSpeed * state.scale;
         col.update();
         col.draw();
 
@@ -1053,7 +1054,7 @@ function loop() {
 
     // Obstacles Update & Collision
     obstacles.forEach(obs => {
-        obs.speed = CONFIG.gameSpeed;
+        obs.speed = CONFIG.gameSpeed * state.scale;
         obs.update();
         obs.draw();
 
